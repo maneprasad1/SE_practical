@@ -1,24 +1,43 @@
-import random #random module to get random integers to create OTP
-import inputInf #email and password of sender from another file
-import smtplib #simple message transfer protocol#library to send email to users email address
+import random
+import smtplib
 
-n=6
-OTP=""
-for i in range(n):
-    OTP+=str(random.randint(0,9))
 
-server =smtplib.SMTP('smtp.gmail.com',587)
-Senders_email = inputInf.email
-Senders_password= inputInf.password
-
+server = smtplib.SMTP('smtp.gmail.com', 587)
 server.starttls()
-server.login(Senders_email, password=Senders_password) 
+server.login("prasadmane2003@gmail.com", "xpchhilpnmgzwuiy")
 
-receivers_name=input("Enter receivers name ")
-receivers_email=input("Enter receivers email ")
+def generate_otp():
+    otp = random.randint(100000, 999999)
+    return otp
 
-msg=("Hi "+ receivers_name +"\n"+ str(OTP)+" is your OTP ")
-print (msg)
-server.sendmail (Senders_email, receivers_email,msg)
-server.quit() 
-print("email has been sent!")
+
+def send_email(msg, email_id):
+    sender_email = 'prasadmane2003@gmail.com'
+    server.sendmail(sender_email, email_id, msg)
+
+
+def otp_verification(otp):
+    user_input = input("Enter Your OTP >>:")
+    if user_input == otp:
+        print("Verified")
+    else:
+        print("Please Check your OTP again")
+        print("Press\n 1 To retry \n 2 To resend OTP \n 3 To Stop")
+        choice = input("Enter you choice")
+        if choice == 1:
+            otp_verification(otp)
+        elif choice == 2:
+            main()
+        else:
+            print("Thank You!")
+
+
+def main():
+    otp = str(generate_otp())
+    msg = otp + " is your OTP"
+    email_id = input("Enter your email: ")
+    send_email(msg, email_id)
+    otp_verification(otp)
+
+if __name__ == "main":
+    main()  
