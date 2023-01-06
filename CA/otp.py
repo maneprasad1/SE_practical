@@ -1,31 +1,46 @@
-import random #random module to get random integers to create OTP
-import inputInf #email and password of sender from another file
-import smtplib #simple message transfer protocol#library to send email to users email address
+import random
+import smtplib
 
-n=6
-def generate_otp(n):
-    OTP=""
-    for i in range(n):
-        OTP+=str(random.randint(0,9)) 
-    return (OTP)
+def generate_otp():
+    """Generate a 6-digit OTP"""
+    return random.randint(100000, 999999)
 
-server =smtplib.SMTP('smtp.gmail.com',587)
-
-Senders_email = inputInf.email
-Senders_password= inputInf.password
-
-def login_into_sendersemail():
+def send_email(otp, email_id):
+    """Send an email with the OTP to the given email address"""
+    msg = f"{otp} is your OTP"
+    sender_email = 'prasadmane2003@gmail.com'
+    server = smtplib.SMTP('smtp.gmail.com', 587)
     server.starttls()
-    server.login(Senders_email, password=Senders_password) 
-receivers_name=input("Enter receivers name ")
-receivers_email=input("Enter receivers email ")
+    server.login("prasadmane2003@gmail.com", "xpchhilpnmgzwuiy")
+    server.sendmail(sender_email, email_id, msg)
 
-def send_email():
-    login_into_sendersemail()
-    otp_var=generate_otp(n)
-    msg=("Hi "+ receivers_name +"\n"+ str(otp_var)+" is your OTP ")
-    print (msg)
-    server.sendmail (Senders_email, receivers_email,msg)
-    server.quit() 
-    print("email has been sent!")
-send_email()
+def verify_otp(user_input,otp):
+    """Prompt the user to enter the OTP and verify it"""
+
+    if user_input == otp:
+        return True
+    else:
+        return False
+
+def main():
+    """Send the OTP to the user's email and verify it"""
+    otp = str(generate_otp())
+    email_id = input("Enter your email: ")
+    user_input = input("Enter Your OTP >>:")
+    send_email(otp, email_id)
+    if(verify_otp(otp,user_input)):
+        print("OTP veriied")
+    else:
+        print("Please Check your OTP again")
+        print("Press\n 1 To retry \n 2 To resend OTP \n 3 To Stop")
+        choice = input("Enter you choice")
+        if choice == 1:
+            verify_otp(otp)
+        elif choice == 2:
+            main()
+        else:
+            print("Thank You!")
+    
+
+if __name__ == "__main__":
+    main()  
